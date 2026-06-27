@@ -19,6 +19,9 @@ content/
   ideas/        early research questions and sketches
   experiments/  experiment logs and reproducible notes
 docs/           GitHub Pages source
+docs/papers/    public paper notes shell
+docs/ideas/     public research ideas shell
+docs/experiments/ public experiment logs shell
 ```
 
 ## Local Preview
