@@ -8,32 +8,35 @@
     <link rel="stylesheet" href="../styles.css">
   </head>
   <body>
+    
     <header class="site-header">
       <div class="shell">
         <nav class="nav" aria-label="Primary navigation">
-          <a href="https://dev-heps.github.io/">Portfolio</a>
-          <a href="../">Research Notes</a>
-          <strong>Ideas</strong>
-          <a href="../papers/">Papers</a>
-          <a href="../experiments/">Experiments</a>
+          <a href="https://dev-heps.github.io/" class="nav-back"><span>←</span><span>Portfolio</span></a>
+          <div class="nav-divider" aria-hidden="true"></div>
+          <a href="../" class="">Research Notes</a>
+          <a href="../papers/" class="">Papers</a>
+          <a href="../ideas/" class="nav-active">Ideas</a>
+          <a href="../experiments/" class="">Experiments</a>
         </nav>
       </div>
     </header>
+  
     <main class="shell">
       <section class="hero">
-        <p class="eyebrow">Research Notes</p>
+        <p class="eyebrow">Research Section</p>
         <h1>Ideas</h1>
-        <p class="lede">Early research questions, sketches, hypotheses, and project directions.</p>
+        <p class="lede">Early research hypotheses, theoretical sketches, and potential project directions.</p>
       </section>
       <section class="list">
         
         <article class="card">
-          <p class="status">empty shell</p>
-          <h3>No entries yet</h3>
-          <p>Add markdown notes in <code>content/ideas/</code> and run build to generate.</p>
+          <span class="status">active queue</span>
+          <h3>No notes published yet</h3>
+          <p>Add markdown notes in <code>content/ideas/</code> to auto-generate.</p>
         </article>
       </section>
     </main>
-    <footer class="shell">&copy; 2026 Dongwoo Lee. Back to <a href="../">Research Notes</a>.</footer>
+    <footer>&copy; 2026 Dongwoo Lee. Research Notes Archive.</footer>
   </body>
 </html>

@@ -8,32 +8,35 @@
     <link rel="stylesheet" href="../styles.css">
   </head>
   <body>
+    
     <header class="site-header">
       <div class="shell">
         <nav class="nav" aria-label="Primary navigation">
-          <a href="https://dev-heps.github.io/">Portfolio</a>
-          <a href="../">Research Notes</a>
-          <strong>Papers</strong>
-          <a href="../ideas/">Ideas</a>
-          <a href="../experiments/">Experiments</a>
+          <a href="https://dev-heps.github.io/" class="nav-back"><span>←</span><span>Portfolio</span></a>
+          <div class="nav-divider" aria-hidden="true"></div>
+          <a href="../" class="">Research Notes</a>
+          <a href="../papers/" class="nav-active">Papers</a>
+          <a href="../ideas/" class="">Ideas</a>
+          <a href="../experiments/" class="">Experiments</a>
         </nav>
       </div>
     </header>
+  
     <main class="shell">
       <section class="hero">
-        <p class="eyebrow">Research Notes</p>
+        <p class="eyebrow">Research Section</p>
         <h1>Papers</h1>
-        <p class="lede">A place for paper summaries, methods, limitations, and questions that connect back to ongoing research.</p>
+        <p class="lede">Literature reviews, paper summaries, methodologies, and open questions across digital healthcare and mathematical sciences.</p>
       </section>
       <section class="list">
         
         <article class="card">
-          <p class="status">empty shell</p>
-          <h3>No entries yet</h3>
-          <p>Add markdown notes in <code>content/papers/</code> and run build to generate.</p>
+          <span class="status">active queue</span>
+          <h3>No notes published yet</h3>
+          <p>Add markdown notes in <code>content/papers/</code> to auto-generate.</p>
         </article>
       </section>
     </main>
-    <footer class="shell">&copy; 2026 Dongwoo Lee. Back to <a href="../">Research Notes</a>.</footer>
+    <footer>&copy; 2026 Dongwoo Lee. Research Notes Archive.</footer>
   </body>
 </html>

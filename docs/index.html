@@ -8,39 +8,44 @@
     <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
+    
     <header class="site-header">
       <div class="shell">
         <nav class="nav" aria-label="Primary navigation">
-          <a href="https://dev-heps.github.io/">Portfolio</a>
-          <strong>Research Notes</strong>
-          <a href="./papers/">Papers</a>
-          <a href="./ideas/">Ideas</a>
-          <a href="./experiments/">Experiments</a>
+          <a href="https://dev-heps.github.io/" class="nav-back"><span>←</span><span>Portfolio</span></a>
+          <div class="nav-divider" aria-hidden="true"></div>
+          <a href="./" class="nav-active">Research Notes</a>
+          <a href="./papers/" class="">Papers</a>
+          <a href="./ideas/" class="">Ideas</a>
+          <a href="./experiments/" class="">Experiments</a>
         </nav>
       </div>
     </header>
+  
     <main class="shell">
       <section class="hero">
-        <p class="eyebrow">Research archive</p>
+        <p class="eyebrow">Research Archive</p>
         <h1>Research Notes</h1>
-        <p class="lede">Working notes for papers, experiments, and research questions across digital healthcare, mathematical biology, and quantum computing.</p>
+        <p class="lede">Working notes for literature reviews, early hypotheses, and computational experiments across digital healthcare, mathematical biology, and quantum computing.</p>
       </section>
-      <section class="grid" aria-label="Research note categories">
+      <section class="grid" aria-label="Research categories">
         <a class="card" href="./papers/">
+          <span class="status">Literature</span>
           <h2>Papers</h2>
-          <p>Summaries, claims, methods, limitations, and follow-up questions.</p>
+          <p>Key claims, methods, limitations, and critical summaries of relevant literature.</p>
         </a>
         <a class="card" href="./ideas/">
+          <span class="status">Hypotheses</span>
           <h2>Ideas</h2>
-          <p>Early research questions, sketches, and possible project directions.</p>
+          <p>Early research questions, mathematical sketches, and conceptual project roadmaps.</p>
         </a>
         <a class="card" href="./experiments/">
+          <span class="status">Logs</span>
           <h2>Experiments</h2>
-          <p>Experiment logs, dataset notes, and reproducibility details.</p>
+          <p>Computational reproducibility logs, parameter sweeps, and benchmark data.</p>
         </a>
       </section>
     </main>
-    <footer class="shell">&copy; 2026 Dongwoo Lee. Back to <a href="https://dev-heps.github.io/">Portfolio</a>.</footer>
+    <footer>&copy; 2026 Dongwoo Lee. Research Notes Archive.</footer>
   </body>
 </html>
-

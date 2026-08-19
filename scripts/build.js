@@ -6,16 +6,36 @@ const CONTENT_DIR = path.join(ROOT_DIR, 'content');
 const DOCS_DIR = path.join(ROOT_DIR, 'docs');
 
 const SECTIONS = [
-  { id: 'papers', title: 'Papers', lede: 'A place for paper summaries, methods, limitations, and questions that connect back to ongoing research.' },
-  { id: 'ideas', title: 'Ideas', lede: 'Early research questions, sketches, hypotheses, and project directions.' },
-  { id: 'experiments', title: 'Experiments', lede: 'Experiment logs, setup details, reproducible notes, and observations.' }
+  { id: 'papers', title: 'Papers', lede: 'Literature reviews, paper summaries, methodologies, and open questions across digital healthcare and mathematical sciences.' },
+  { id: 'ideas', title: 'Ideas', lede: 'Early research hypotheses, theoretical sketches, and potential project directions.' },
+  { id: 'experiments', title: 'Experiments', lede: 'Reproducible computational experiments, benchmark setups, and observations.' }
 ];
+
+function getHeaderNav(activeSection, depth = 1) {
+  const isDev = process.env.NODE_ENV === 'development';
+  const prefix = depth === 2 ? '../../' : (depth === 1 ? '../' : './');
+  const portfolioUrl = isDev ? 'http://localhost:3000/' : 'https://dev-heps.github.io/';
+
+  return `
+    <header class="site-header">
+      <div class="shell">
+        <nav class="nav" aria-label="Primary navigation">
+          <a href="${portfolioUrl}" class="nav-back"><span>←</span><span>Portfolio</span></a>
+          <div class="nav-divider" aria-hidden="true"></div>
+          <a href="${prefix}" class="${activeSection === 'home' ? 'nav-active' : ''}">Research Notes</a>
+          <a href="${prefix}papers/" class="${activeSection === 'papers' ? 'nav-active' : ''}">Papers</a>
+          <a href="${prefix}ideas/" class="${activeSection === 'ideas' ? 'nav-active' : ''}">Ideas</a>
+          <a href="${prefix}experiments/" class="${activeSection === 'experiments' ? 'nav-active' : ''}">Experiments</a>
+        </nav>
+      </div>
+    </header>
+  `;
+}
 
 function parseMarkdown(md) {
   let frontmatter = {};
   let body = md;
 
-  // Extract YAML-like frontmatter
   if (md.startsWith('---')) {
     const end = md.indexOf('---', 3);
     if (end !== -1) {
@@ -32,17 +52,11 @@ function parseMarkdown(md) {
     }
   }
 
-  // Parse title if not in frontmatter
   if (!frontmatter.title) {
     const titleMatch = body.match(/^#\s+(.+)$/m);
-    if (titleMatch) {
-      frontmatter.title = titleMatch[1].trim();
-    } else {
-      frontmatter.title = 'Untitled Note';
-    }
+    frontmatter.title = titleMatch ? titleMatch[1].trim() : 'Untitled Note';
   }
 
-  // Simple Markdown to HTML parser
   let html = body
     .replace(/^### (.*$)/gim, '<h3>$1</h3>')
     .replace(/^## (.*$)/gim, '<h2>$1</h2>')
@@ -53,16 +67,13 @@ function parseMarkdown(md) {
     .replace(/`([^`]+)`/gim, '<code>$1</code>')
     .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2">$1</a>');
 
-  // Code blocks
   html = html.replace(/```([a-z]*)\n([\s\S]*?)```/gim, (match, lang, code) => {
     return `<pre><code class="language-${lang}">${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
   });
 
-  // Lists
   html = html.replace(/^\s*-\s+(.*$)/gim, '<li>$1</li>');
   html = html.replace(/(<li>.*<\/li>)/gims, '<ul>$1</ul>');
 
-  // Paragraphs
   const blocks = html.split(/\n\s*\n/);
   html = blocks.map(block => {
     block = block.trim();
@@ -84,11 +95,10 @@ function buildSection(section) {
     fs.mkdirSync(sectionDocsDir, { recursive: true });
   }
 
-  if (!fs.existsSync(sectionContentDir)) {
-    return;
-  }
-
-  const files = fs.readdirSync(sectionContentDir).filter(f => f.endsWith('.md') && f.toLowerCase() !== 'readme.md');
+  const files = fs.existsSync(sectionContentDir) 
+    ? fs.readdirSync(sectionContentDir).filter(f => f.endsWith('.md') && f.toLowerCase() !== 'readme.md')
+    : [];
+  
   const entries = [];
 
   for (const file of files) {
@@ -108,16 +118,7 @@ function buildSection(section) {
     <link rel="stylesheet" href="../../styles.css">
   </head>
   <body>
-    <header class="site-header">
-      <div class="shell">
-        <nav class="nav" aria-label="Primary navigation">
-          <a href="https://dev-heps.github.io/">Portfolio</a>
-          <a href="../../">Research Notes</a>
-          <a href="../">${section.title}</a>
-          <strong>${frontmatter.title}</strong>
-        </nav>
-      </div>
-    </header>
+    ${getHeaderNav(section.id, 2)}
     <main class="shell">
       <article class="article-content">
         <header class="hero">
@@ -132,7 +133,7 @@ function buildSection(section) {
         </div>
       </article>
     </main>
-    <footer class="shell">&copy; 2026 Dongwoo Lee. Back to <a href="../">${section.title}</a>.</footer>
+    <footer>&copy; 2026 Dongwoo Lee. Research Notes Archive.</footer>
   </body>
 </html>`;
 
@@ -141,23 +142,22 @@ function buildSection(section) {
     entries.push({
       title: frontmatter.title,
       slug,
-      status: frontmatter.status || 'Active',
+      status: frontmatter.status || 'Note',
       summary: frontmatter.summary || 'Click to read note details.',
       url: `./${htmlFileName}`
     });
   }
 
-  // Generate index.html for the section
   const cardsHtml = entries.length > 0 ? entries.map(e => `
-        <article class="card">
-          <p class="status">${e.status}</p>
-          <h3><a href="${e.url}">${e.title}</a></h3>
+        <a class="card" href="${e.url}">
+          <span class="status">${e.status}</span>
+          <h3>${e.title}</h3>
           <p>${e.summary}</p>
-        </article>`).join('\n') : `
+        </a>`).join('\n') : `
         <article class="card">
-          <p class="status">empty shell</p>
-          <h3>No entries yet</h3>
-          <p>Add markdown notes in <code>content/${section.id}/</code> and run build to generate.</p>
+          <span class="status">active queue</span>
+          <h3>No notes published yet</h3>
+          <p>Add markdown notes in <code>content/${section.id}/</code> to auto-generate.</p>
         </article>`;
 
   const sectionIndexHtml = `<!doctype html>
@@ -170,19 +170,10 @@ function buildSection(section) {
     <link rel="stylesheet" href="../styles.css">
   </head>
   <body>
-    <header class="site-header">
-      <div class="shell">
-        <nav class="nav" aria-label="Primary navigation">
-          <a href="https://dev-heps.github.io/">Portfolio</a>
-          <a href="../">Research Notes</a>
-          <strong>${section.title}</strong>
-          ${SECTIONS.filter(s => s.id !== section.id).map(s => `<a href="../${s.id}/">${s.title}</a>`).join('\n          ')}
-        </nav>
-      </div>
-    </header>
+    ${getHeaderNav(section.id, 1)}
     <main class="shell">
       <section class="hero">
-        <p class="eyebrow">Research Notes</p>
+        <p class="eyebrow">Research Section</p>
         <h1>${section.title}</h1>
         <p class="lede">${section.lede}</p>
       </section>
@@ -190,14 +181,56 @@ function buildSection(section) {
         ${cardsHtml}
       </section>
     </main>
-    <footer class="shell">&copy; 2026 Dongwoo Lee. Back to <a href="../">Research Notes</a>.</footer>
+    <footer>&copy; 2026 Dongwoo Lee. Research Notes Archive.</footer>
   </body>
 </html>`;
 
   fs.writeFileSync(path.join(sectionDocsDir, 'index.html'), sectionIndexHtml, 'utf-8');
-  console.log(`[build:research] Built ${section.title}: ${entries.length} notes processed.`);
+  console.log(`[build:research] Built ${section.title}: ${entries.length} notes.`);
 }
 
-console.log('[build:research] Compiling research-notes...');
+console.log('[build:research] Compiling research-notes with unified design...');
 SECTIONS.forEach(buildSection);
+
+// Update docs/index.html (Home)
+const homeIndexHtml = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Research Notes - Dongwoo Lee</title>
+    <meta name="description" content="Research notes on digital healthcare, mathematical biology, and quantum computing.">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    ${getHeaderNav('home', 0)}
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">Research Archive</p>
+        <h1>Research Notes</h1>
+        <p class="lede">Working notes for literature reviews, early hypotheses, and computational experiments across digital healthcare, mathematical biology, and quantum computing.</p>
+      </section>
+      <section class="grid" aria-label="Research categories">
+        <a class="card" href="./papers/">
+          <span class="status">Literature</span>
+          <h2>Papers</h2>
+          <p>Key claims, methods, limitations, and critical summaries of relevant literature.</p>
+        </a>
+        <a class="card" href="./ideas/">
+          <span class="status">Hypotheses</span>
+          <h2>Ideas</h2>
+          <p>Early research questions, mathematical sketches, and conceptual project roadmaps.</p>
+        </a>
+        <a class="card" href="./experiments/">
+          <span class="status">Logs</span>
+          <h2>Experiments</h2>
+          <p>Computational reproducibility logs, parameter sweeps, and benchmark data.</p>
+        </a>
+      </section>
+    </main>
+    <footer>&copy; 2026 Dongwoo Lee. Research Notes Archive.</footer>
+  </body>
+</html>`;
+
+fs.writeFileSync(path.join(DOCS_DIR, 'index.html'), homeIndexHtml, 'utf-8');
 console.log('[build:research] Complete!');
