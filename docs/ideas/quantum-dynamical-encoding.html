@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quantum State Encoding for Biological Dynamical Systems - Ideas - Research Notes</title>
+    <meta name="description" content="Exploring Carleman linearization to map nonlinear biochemical ODEs onto unitary quantum state evolutions.">
+    <link rel="stylesheet" href="../../styles.css">
+  </head>
+  <body>
+    
+    <header class="site-header">
+      <div class="shell">
+        <nav class="nav" aria-label="Primary navigation">
+          <a href="https://dev-heps.github.io/" class="nav-back"><span>←</span><span>Portfolio</span></a>
+          <div class="nav-divider" aria-hidden="true"></div>
+          <a href="../../" class="">Research Notes</a>
+          <a href="../../papers/" class="">Papers</a>
+          <a href="../../ideas/" class="nav-active">Ideas</a>
+          <a href="../../experiments/" class="">Experiments</a>
+        </nav>
+      </div>
+    </header>
+  
+    <main class="shell">
+      <article class="article-content">
+        <header class="hero">
+          <p class="eyebrow">Ideas / Working Hypothesis</p>
+          <h1>Quantum State Encoding for Biological Dynamical Systems</h1>
+          
+          
+          
+        </header>
+        <div class="content-body">
+          <h1>Quantum State Encoding for Biological Dynamical Systems</h1>
+<h2>1. Research Question</h2>
+Can nonlinear metabolic and biochemical reaction networks be mapped efficiently into linear infinite-dimensional Hilbert spaces for quantum simulation?
+<h2>2. Proposed Hypothesis & Framework</h2>
+Applying <strong>Carleman Linearization</strong> transforms a finite-dimensional nonlinear ODE:
+<p>$$\frac{d\mathbf{x}}{dt} = \mathbf{F}(\mathbf{x})$$</p>
+<p>into a countable system of linear ODEs in terms of monomial vectors $\mathbf{y} = [x_1, x_2, x_1^2, x_1 x_2, \dots]^T$:</p>
+<p>$$\frac{d\mathbf{y}}{dt} = \mathbf{A} \mathbf{y}$$</p>
+<h2>3. Potential Quantum Approach</h2><ul><li>Embed truncated linear system into unitary operations via the <strong>Quantum Linear System Algorithm (QLSA)</strong> or <strong>HHL framework</strong>.</li><li>Evaluate gate complexity vs. truncation error $\epsilon$.</li>
+<h2>4. Next Steps</h2><li>[ ] Implement 2-variable Lotka-Volterra Carleman linearization in Python.</li><li>[ ] Simulate small-scale state vector evolution using Qiskit.</li></ul>
+        </div>
+      </article>
+    </main>
+    <footer>&copy; 2026 Dongwoo Lee. Research Notes Archive.</footer>
+  </body>
+</html>
