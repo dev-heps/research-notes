@@ -1,0 +1,10 @@
+{
+  "name": "research-notes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Research notes on digital healthcare, mathematical biology, and quantum computing",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "preview": "npx serve docs -l 3003"
+  }
+}
