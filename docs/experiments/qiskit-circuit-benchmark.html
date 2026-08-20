@@ -1,52 +1,0 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Qiskit Statevector Simulation & Gate Fidelity Benchmark - Experiments - Research Notes</title>
-    <meta name="description" content="Baseline benchmark measuring runtime and state fidelity across 4-16 qubit registers using Qiskit Aer.">
-    <link rel="stylesheet" href="../../styles.css">
-  </head>
-  <body>
-    
-    <header class="site-header">
-      <div class="shell">
-        <nav class="nav" aria-label="Primary navigation">
-          <a href="https://dev-heps.github.io/" class="nav-back"><span>←</span><span>Portfolio</span></a>
-          <div class="nav-divider" aria-hidden="true"></div>
-          <a href="../../" class="">Research Notes</a>
-          <a href="../../papers/" class="">Papers</a>
-          <a href="../../ideas/" class="">Ideas</a>
-          <a href="../../experiments/" class="nav-active">Experiments</a>
-        </nav>
-      </div>
-    </header>
-  
-    <main class="shell">
-      <article class="article-content">
-        <header class="hero">
-          <p class="eyebrow">Experiments / Lab Log</p>
-          <h1>Qiskit Statevector Simulation & Gate Fidelity Benchmark</h1>
-          
-          
-          
-        </header>
-        <div class="content-body">
-          <h1>Qiskit Statevector Simulation & Gate Fidelity Benchmark</h1>
-<h2>1. Experimental Objective</h2>
-Benchmark classical simulation limits of parameterized quantum circuits (Hardware-Efficient Ansatz) across varying qubit counts and noise models.
-<h2>2. Benchmark Environment</h2><ul><li><strong>Framework</strong>: Qiskit 1.x</li><li><strong>Backend</strong>: <code>qiskit_aer.AerSimulator(method='statevector')</code></li><li><strong>Qubit Counts</strong>: $n \in \{4, 8, 12, 16\}$</li>
-<h2>3. Protocol & Metrics</h2>
-``<code>python
-from qiskit.circuit.library import RealAmplitudes
-from qiskit_aer import AerSimulator
-<h1>Construct 2-layer RealAmplitudes ansatz</h1>
-ansatz = RealAmplitudes(num_qubits=8, reps=2)
-</code>``
-<h2>4. Observations & Notes</h2><li>Memory scaling grows exponentially ($2^n 	imes 16$ bytes for double precision statevector).</li><li>At 16 qubits, memory consumption reaches $\sim 1	ext{ MB}$, baseline runtime $pprox 42	ext{ ms}$.</li></ul>
-        </div>
-      </article>
-    </main>
-    <footer>&copy; 2026 Dongwoo Lee. Research Notes Archive.</footer>
-  </body>
-</html>

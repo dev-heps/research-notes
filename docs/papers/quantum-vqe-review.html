@@ -1,50 +1,0 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Variational Quantum Algorithms & VQE Overview - Papers - Research Notes</title>
-    <meta name="description" content="Critical summary of hybrid quantum-classical algorithms, parameterized ansatz circuits, and ground state energy estimation.">
-    <link rel="stylesheet" href="../../styles.css">
-  </head>
-  <body>
-    
-    <header class="site-header">
-      <div class="shell">
-        <nav class="nav" aria-label="Primary navigation">
-          <a href="https://dev-heps.github.io/" class="nav-back"><span>←</span><span>Portfolio</span></a>
-          <div class="nav-divider" aria-hidden="true"></div>
-          <a href="../../" class="">Research Notes</a>
-          <a href="../../papers/" class="nav-active">Papers</a>
-          <a href="../../ideas/" class="">Ideas</a>
-          <a href="../../experiments/" class="">Experiments</a>
-        </nav>
-      </div>
-    </header>
-  
-    <main class="shell">
-      <article class="article-content">
-        <header class="hero">
-          <p class="eyebrow">Papers / Literature Review</p>
-          <h1>Variational Quantum Algorithms & VQE Overview</h1>
-          <p class="authors"><strong>Authors:</strong> McArdle et al.</p>
-          <p class="meta"><strong>Year:</strong> 2020</p>
-          <p class="link"><a href="https://arxiv.org/abs/1808.10402" target="_blank" rel="noreferrer">Original Source ↗</a></p>
-        </header>
-        <div class="content-body">
-          <h1>Variational Quantum Algorithms & VQE Overview</h1>
-<h2>1. Problem Definition & Motivation</h2>
-In the Noisy Intermediate-Scale Quantum (NISQ) era, deep quantum circuits suffer from decoherence and gate infidelities. <strong>Variational Quantum Algorithms (VQAs)</strong> mitigate circuit depth requirements by delegating optimization loops to classical optimizers.
-<h2>2. Core Mathematical Formulation</h2>
-The Variational Quantum Eigensolver (VQE) targets finding the ground state energy $E_0$ of a given Hamiltonian $H$:
-<p>$$E_0 \le \langle \psi(oldsymbol{	heta}) | H | \psi(oldsymbol{	heta}) angle$$</p>
-<p>Where:<ul><li>$|\psi(oldsymbol{	heta})</li>angle = U(oldsymbol{	heta})|0angle$ is the parameterized trial state (ansatz).<li>$oldsymbol{	heta}$ is optimized via classical gradient descent or SPSA.</li></p>
-<h2>3. Key Observations & Bottlenecks</h2><li><strong>Barren Plateaus</strong>: Gradient vanishing exponentially with the number of qubits ($O(e^{-n})$) in deep, random ansatz architectures.</li><li><strong>Shot Noise</strong>: Measurement variance scaling with $1/\sqrt{N_{	ext{shots}}}$.</li></ul>
-<h2>4. Relevance to Research</h2>
-Template for evaluating Hamiltonian mappings and comparing convergence profiles on biological molecular simulations.
-        </div>
-      </article>
-    </main>
-    <footer>&copy; 2026 Dongwoo Lee. Research Notes Archive.</footer>
-  </body>
-</html>

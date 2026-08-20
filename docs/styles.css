@@ -173,6 +173,147 @@ h1 {
   letter-spacing: 0.05em;
 }
 
+/* ── Article Detail & Markdown Typography ── */
+.article-content {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.article-content .hero {
+  margin-top: 2rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.article-content .authors,
+.article-content .meta,
+.article-content .link {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+  color: #52525b;
+}
+
+.article-content .link a {
+  color: var(--color-accent);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.content-body {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #27272a;
+}
+
+.content-body h1,
+.content-body h2,
+.content-body h3 {
+  color: #09090b;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+.content-body h1 { font-size: 1.75rem; }
+.content-body h2 { font-size: 1.4rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--color-edge); }
+.content-body h3 { font-size: 1.15rem; }
+
+.content-body p {
+  margin: 1.25rem 0;
+}
+
+.content-body hr {
+  border: none;
+  border-top: 1px solid var(--color-edge);
+  margin: 2.5rem 0;
+}
+
+.content-body blockquote {
+  margin: 1.5rem 0;
+  padding: 0.75rem 1.25rem;
+  border-left: 3px solid var(--color-accent);
+  background: var(--color-card);
+  border-radius: 0 0.5rem 0.5rem 0;
+  color: #3f3f46;
+  font-style: italic;
+}
+
+.content-body ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.content-body li {
+  margin: 0.5rem 0;
+}
+
+.content-body li.task-item {
+  list-style: none;
+  margin-left: -1rem;
+}
+
+.content-body code {
+  font-family: ui-monospace, 'IBM Plex Mono', Menlo, Consolas, monospace;
+  font-size: 0.875em;
+  padding: 0.2em 0.4em;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 0.35rem;
+  color: #09090b;
+}
+
+.content-body pre {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  background: #18181b;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+}
+
+.content-body pre code {
+  background: transparent;
+  padding: 0;
+  color: #f4f4f5;
+  font-size: 0.875rem;
+}
+
+.table-wrap {
+  margin: 1.75rem 0;
+  overflow-x: auto;
+  border: 1px solid var(--color-edge);
+  border-radius: 0.5rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+th, td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-edge);
+}
+
+th {
+  background: var(--color-card);
+  font-weight: 600;
+  color: #09090b;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+.math-display {
+  margin: 1.5rem 0;
+  padding: 1rem 0;
+  overflow-x: auto;
+  text-align: center;
+}
+
 footer {
   margin-top: 4rem;
   padding-bottom: 3rem;

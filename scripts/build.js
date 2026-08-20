@@ -6,9 +6,21 @@ const CONTENT_DIR = path.join(ROOT_DIR, 'content');
 const DOCS_DIR = path.join(ROOT_DIR, 'docs');
 
 const SECTIONS = [
-  { id: 'papers', title: 'Papers', lede: 'Literature reviews, paper summaries, methodologies, and open questions across digital healthcare and mathematical sciences.' },
-  { id: 'ideas', title: 'Ideas', lede: 'Early research hypotheses, theoretical sketches, and potential project directions.' },
-  { id: 'experiments', title: 'Experiments', lede: 'Reproducible computational experiments, benchmark setups, and observations.' }
+  { 
+    id: 'papers', 
+    title: 'Papers', 
+    lede: 'Literature reviews, paper summaries, methodologies, and open questions across digital healthcare, mathematics, and quantum computing.' 
+  },
+  { 
+    id: 'ideas', 
+    title: 'Ideas', 
+    lede: 'Early research hypotheses, theoretical sketches, and conceptual project roadmaps.' 
+  },
+  { 
+    id: 'experiments', 
+    title: 'Experiments', 
+    lede: 'Reproducible computational experiments, benchmark setups, and observations.' 
+  }
 ];
 
 function getHeaderNav(activeSection, depth = 1) {
@@ -29,6 +41,14 @@ function getHeaderNav(activeSection, depth = 1) {
         </nav>
       </div>
     </header>
+  `;
+}
+
+function getKaTeXHead() {
+  return `
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
   `;
 }
 
@@ -56,33 +76,89 @@ function parseMarkdown(md) {
     const titleMatch = body.match(/^#\s+(.+)$/m);
     frontmatter.title = titleMatch ? titleMatch[1].trim() : 'Untitled Note';
   }
+  // Remove first # Title heading to avoid duplicate h1 with article header
+  body = body.replace(/^#\s+.+$/m, '').trim();
 
+  // Preserve code blocks with placeholders
+  const codeBlocks = [];
+  body = body.replace(/```([a-z0-9_-]*)\n([\s\S]*?)```/gim, (match, lang, code) => {
+    const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
+    codeBlocks.push(`<pre><code class="language-${lang}">${code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`);
+    return placeholder;
+  });
+
+  // Preserve display math $$...$$
+  const mathBlocks = [];
+  body = body.replace(/\$\$([\s\S]*?)\$\$/gim, (match, math) => {
+    const placeholder = `__MATH_BLOCK_${mathBlocks.length}__`;
+    mathBlocks.push(`$$${math}$$`);
+    return placeholder;
+  });
+
+  // Basic markdown transformations
   let html = body
     .replace(/^### (.*$)/gim, '<h3>$1</h3>')
     .replace(/^## (.*$)/gim, '<h2>$1</h2>')
     .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    .replace(/^---$/gim, '<hr>')
     .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
     .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/gim, '<em>$1</em>')
     .replace(/`([^`]+)`/gim, '<code>$1</code>')
     .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2">$1</a>');
 
-  html = html.replace(/```([a-z]*)\n([\s\S]*?)```/gim, (match, lang, code) => {
-    return `<pre><code class="language-${lang}">${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
+  // Parse markdown tables
+  html = html.replace(/((?:\|[^\n]+\|\r?\n)+)/g, (match) => {
+    const lines = match.trim().split(/\r?\n/).filter(Boolean);
+    if (lines.length < 2) return match;
+    const isHeaderSeparator = lines[1].replace(/[\s|:-]/g, '').length === 0;
+    if (!isHeaderSeparator) return match;
+
+    const parseRow = (row, tag) => {
+      const cells = row.split('|').slice(1, -1).map(c => c.trim());
+      return `<tr>${cells.map(c => `<${tag}>${c}</${tag}>`).join('')}</tr>`;
+    };
+
+    const header = `<thead>${parseRow(lines[0], 'th')}</thead>`;
+    const bodyRows = lines.slice(2).map(r => parseRow(r, 'td')).join('');
+    return `<div class="table-wrap"><table>${header}<tbody>${bodyRows}</tbody></table></div>`;
   });
 
+  // Parse lists
+  html = html.replace(/^\s*-\s+\[ \]\s+(.*$)/gim, '<li class="task-item"><input type="checkbox" disabled> $1</li>');
+  html = html.replace(/^\s*-\s+\[x\]\s+(.*$)/gim, '<li class="task-item"><input type="checkbox" checked disabled> $1</li>');
   html = html.replace(/^\s*-\s+(.*$)/gim, '<li>$1</li>');
-  html = html.replace(/(<li>.*<\/li>)/gims, '<ul>$1</ul>');
+  html = html.replace(/(<li>[\s\S]*?<\/li>(\s*<li>[\s\S]*?<\/li>)*)/gim, '<ul>$1</ul>');
 
+  // Paragraph splitting
   const blocks = html.split(/\n\s*\n/);
   html = blocks.map(block => {
     block = block.trim();
     if (!block) return '';
-    if (block.startsWith('<h') || block.startsWith('<ul') || block.startsWith('<pre') || block.startsWith('<blockquote')) {
+    if (
+      block.startsWith('<h') || 
+      block.startsWith('<ul') || 
+      block.startsWith('<pre') || 
+      block.startsWith('<blockquote') || 
+      block.startsWith('<hr') || 
+      block.startsWith('<div class="table-wrap"') || 
+      block.startsWith('__CODE_BLOCK_') || 
+      block.startsWith('__MATH_BLOCK_')
+    ) {
       return block;
     }
     return `<p>${block.replace(/\n/g, '<br>')}</p>`;
   }).join('\n');
+
+  // Restore code blocks
+  codeBlocks.forEach((cb, idx) => {
+    html = html.replace(`__CODE_BLOCK_${idx}__`, () => cb);
+  });
+
+  // Restore math blocks
+  mathBlocks.forEach((mb, idx) => {
+    html = html.replace(`__MATH_BLOCK_${idx}__`, () => `<div class="math-display">${mb}</div>`);
+  });
 
   return { frontmatter, html };
 }
@@ -116,6 +192,8 @@ function buildSection(section) {
     <title>${frontmatter.title} - ${section.title} - Research Notes</title>
     <meta name="description" content="${frontmatter.summary || frontmatter.title}">
     <link rel="stylesheet" href="../../styles.css">
+    <link rel="stylesheet" href="/research-notes/styles.css">
+    ${getKaTeXHead()}
   </head>
   <body>
     ${getHeaderNav(section.id, 2)}
@@ -168,6 +246,8 @@ function buildSection(section) {
     <title>${section.title} - Research Notes</title>
     <meta name="description" content="${section.title} for Research Notes.">
     <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="/research-notes/styles.css">
+    ${getKaTeXHead()}
   </head>
   <body>
     ${getHeaderNav(section.id, 1)}
@@ -189,7 +269,7 @@ function buildSection(section) {
   console.log(`[build:research] Built ${section.title}: ${entries.length} notes.`);
 }
 
-console.log('[build:research] Compiling research-notes with unified design...');
+console.log('[build:research] Compiling research-notes with unified design & KaTeX...');
 SECTIONS.forEach(buildSection);
 
 // Update docs/index.html (Home)
@@ -201,6 +281,8 @@ const homeIndexHtml = `<!doctype html>
     <title>Research Notes - Dongwoo Lee</title>
     <meta name="description" content="Research notes on digital healthcare, mathematics, and quantum computing.">
     <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="/research-notes/styles.css">
+    ${getKaTeXHead()}
   </head>
   <body>
     ${getHeaderNav('home', 0)}
