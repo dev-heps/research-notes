@@ -7,7 +7,7 @@ This repository keeps research-oriented writing separate from the main portfolio
 - paper notes
 - research ideas
 - experiment logs
-- domain notes for digital healthcare, mathematical biology, and quantum computing
+- domain notes for digital healthcare, mathematics, and quantum computing
 
 Live site: https://dev-heps.github.io/research-notes/
 
