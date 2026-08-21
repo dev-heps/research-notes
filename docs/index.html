@@ -27,10 +27,13 @@
     </header>
   
     <main class="shell">
-      <section class="hero">
-        <p class="eyebrow">Research Archive</p>
-        <h1>Research Notes</h1>
-        <p class="lede">Working archive for academic paper reviews, literature summaries, and theoretical methodologies across digital healthcare, mathematics, and quantum computing.</p>
+      <section class="hero" style="position: relative; overflow: hidden;">
+        <canvas id="ambient-canvas" style="position: absolute; inset: 0; pointer-events: none; opacity: 0.85; z-index: 0;"></canvas>
+        <div style="position: relative; z-index: 1;">
+          <p class="eyebrow">Research Archive</p>
+          <h1>Research Notes</h1>
+          <p class="lede">Working archive for academic paper reviews, literature summaries, and theoretical methodologies across digital healthcare, mathematics, and quantum computing.</p>
+        </div>
       </section>
       <section class="list" aria-label="Paper reviews">
         
@@ -42,5 +45,51 @@
       </section>
     </main>
     <footer>&copy; 2026 Dongwoo Lee. Research Notes Archive.</footer>
+    
+    <script>
+      (function() {
+        var canvas = document.getElementById('ambient-canvas');
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var dpr = window.devicePixelRatio || 1;
+        var W, H, frame = 0;
+        
+        function resize() {
+          var rect = canvas.parentElement.getBoundingClientRect();
+          W = rect.width;
+          H = rect.height;
+          canvas.width = W * dpr;
+          canvas.height = H * dpr;
+          canvas.style.width = W + 'px';
+          canvas.style.height = H + 'px';
+          ctx.scale(dpr, dpr);
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        function draw() {
+          frame++;
+          ctx.clearRect(0, 0, W, H);
+          var baseline = H * 0.7;
+          
+          for (var l = 0; l < 3; l++) {
+            ctx.beginPath();
+            ctx.strokeStyle = l === 0 ? 'rgba(37, 99, 235, 0.25)' : 'rgba(9, 9, 11, 0.08)';
+            ctx.lineWidth = l === 0 ? 1.4 : 0.8;
+            for (var px = 0; px <= W; px += 3) {
+              var xNorm = px / W;
+              var y = baseline + Math.sin(xNorm * Math.PI * 3 + frame * 0.015 + l * 0.8) * 14
+                             + Math.cos(xNorm * Math.PI * 6 - frame * 0.01) * 6;
+              if (px === 0) ctx.moveTo(px, y);
+              else ctx.lineTo(px, y);
+            }
+            ctx.stroke();
+          }
+          requestAnimationFrame(draw);
+        }
+        draw();
+      })();
+    </script>
+  
   </body>
 </html>

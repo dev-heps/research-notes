@@ -1,4 +1,4 @@
-const fs = require('fs');
+﻿const fs = require('fs');
 const path = require('path');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -40,6 +40,55 @@ function getKaTeXHead() {
   `;
 }
 
+function getAmbientCanvasScript() {
+  return `
+    <script>
+      (function() {
+        var canvas = document.getElementById('ambient-canvas');
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var dpr = window.devicePixelRatio || 1;
+        var W, H, frame = 0;
+        
+        function resize() {
+          var rect = canvas.parentElement.getBoundingClientRect();
+          W = rect.width;
+          H = rect.height;
+          canvas.width = W * dpr;
+          canvas.height = H * dpr;
+          canvas.style.width = W + 'px';
+          canvas.style.height = H + 'px';
+          ctx.scale(dpr, dpr);
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        function draw() {
+          frame++;
+          ctx.clearRect(0, 0, W, H);
+          var baseline = H * 0.7;
+          
+          for (var l = 0; l < 3; l++) {
+            ctx.beginPath();
+            ctx.strokeStyle = l === 0 ? 'rgba(37, 99, 235, 0.25)' : 'rgba(9, 9, 11, 0.08)';
+            ctx.lineWidth = l === 0 ? 1.4 : 0.8;
+            for (var px = 0; px <= W; px += 3) {
+              var xNorm = px / W;
+              var y = baseline + Math.sin(xNorm * Math.PI * 3 + frame * 0.015 + l * 0.8) * 14
+                             + Math.cos(xNorm * Math.PI * 6 - frame * 0.01) * 6;
+              if (px === 0) ctx.moveTo(px, y);
+              else ctx.lineTo(px, y);
+            }
+            ctx.stroke();
+          }
+          requestAnimationFrame(draw);
+        }
+        draw();
+      })();
+    </script>
+  `;
+}
+
 function parseMarkdown(md) {
   let frontmatter = {};
   let body = md;
@@ -52,50 +101,38 @@ function parseMarkdown(md) {
       yamlStr.split('\n').forEach(line => {
         const colonIdx = line.indexOf(':');
         if (colonIdx !== -1) {
-          const key = line.substring(0, colonIdx).trim().toLowerCase();
-          const val = line.substring(colonIdx + 1).trim();
+          const key = line.substring(0, colonIdx).trim();
+          const val = line.substring(colonIdx + 1).trim().replace(/^['"](.*)['"]$/, '$1');
           frontmatter[key] = val;
         }
       });
     }
   }
 
-  if (!frontmatter.title) {
-    const titleMatch = body.match(/^#\s+(.+)$/m);
-    frontmatter.title = titleMatch ? titleMatch[1].trim() : 'Untitled Note';
-  }
-  // Remove first # Title heading to avoid duplicate h1 with article header
-  body = body.replace(/^#\s+.+$/m, '').trim();
+  let codeBlocks = [];
+  let mathBlocks = [];
 
-  // Preserve code blocks with placeholders
-  const codeBlocks = [];
-  body = body.replace(/```([a-z0-9_-]*)\n([\s\S]*?)```/gim, (match, lang, code) => {
-    const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
-    codeBlocks.push(`<pre><code class="language-${lang}">${code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`);
-    return placeholder;
+  body = body.replace(/```([\s\S]*?)```/g, (match, code) => {
+    codeBlocks.push(`<pre><code>${code.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`);
+    return `__CODE_BLOCK_${codeBlocks.length - 1}__`;
   });
 
-  // Preserve display math $$...$$
-  const mathBlocks = [];
-  body = body.replace(/\$\$([\s\S]*?)\$\$/gim, (match, math) => {
-    const placeholder = `__MATH_BLOCK_${mathBlocks.length}__`;
+  body = body.replace(/\$\$([\s\S]*?)\$\$/g, (match, math) => {
     mathBlocks.push(`$$${math}$$`);
-    return placeholder;
+    return `__MATH_BLOCK_${mathBlocks.length - 1}__`;
   });
 
-  // Basic markdown transformations
   let html = body
-    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
     .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-    .replace(/^---$/gim, '<hr>')
-    .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+    .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
     .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/gim, '<em>$1</em>')
     .replace(/`([^`]+)`/gim, '<code>$1</code>')
     .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2">$1</a>');
 
-  // Parse markdown tables
   html = html.replace(/((?:\|[^\n]+\|\r?\n)+)/g, (match) => {
     const lines = match.trim().split(/\r?\n/).filter(Boolean);
     if (lines.length < 2) return match;
@@ -112,13 +149,11 @@ function parseMarkdown(md) {
     return `<div class="table-wrap"><table>${header}<tbody>${bodyRows}</tbody></table></div>`;
   });
 
-  // Parse lists
   html = html.replace(/^\s*-\s+\[ \]\s+(.*$)/gim, '<li class="task-item"><input type="checkbox" disabled> $1</li>');
   html = html.replace(/^\s*-\s+\[x\]\s+(.*$)/gim, '<li class="task-item"><input type="checkbox" checked disabled> $1</li>');
   html = html.replace(/^\s*-\s+(.*$)/gim, '<li>$1</li>');
   html = html.replace(/(<li>[\s\S]*?<\/li>(\s*<li>[\s\S]*?<\/li>)*)/gim, '<ul>$1</ul>');
 
-  // Paragraph splitting
   const blocks = html.split(/\n\s*\n/);
   html = blocks.map(block => {
     block = block.trim();
@@ -138,12 +173,10 @@ function parseMarkdown(md) {
     return `<p>${block.replace(/\n/g, '<br>')}</p>`;
   }).join('\n');
 
-  // Restore code blocks
   codeBlocks.forEach((cb, idx) => {
     html = html.replace(`__CODE_BLOCK_${idx}__`, () => cb);
   });
 
-  // Restore math blocks
   mathBlocks.forEach((mb, idx) => {
     html = html.replace(`__MATH_BLOCK_${idx}__`, () => `<div class="math-display">${mb}</div>`);
   });
@@ -292,16 +325,20 @@ const homeIndexHtml = `<!doctype html>
   <body>
     ${getHeaderNav('home', 0)}
     <main class="shell">
-      <section class="hero">
-        <p class="eyebrow">Research Archive</p>
-        <h1>Research Notes</h1>
-        <p class="lede">Working archive for academic paper reviews, literature summaries, and theoretical methodologies across digital healthcare, mathematics, and quantum computing.</p>
+      <section class="hero" style="position: relative; overflow: hidden;">
+        <canvas id="ambient-canvas" style="position: absolute; inset: 0; pointer-events: none; opacity: 0.85; z-index: 0;"></canvas>
+        <div style="position: relative; z-index: 1;">
+          <p class="eyebrow">Research Archive</p>
+          <h1>Research Notes</h1>
+          <p class="lede">Working archive for academic paper reviews, literature summaries, and theoretical methodologies across digital healthcare, mathematics, and quantum computing.</p>
+        </div>
       </section>
       <section class="list" aria-label="Paper reviews">
         ${homeCardsHtml}
       </section>
     </main>
     <footer>&copy; 2026 Dongwoo Lee. Research Notes Archive.</footer>
+    ${getAmbientCanvasScript()}
   </body>
 </html>`;
 
