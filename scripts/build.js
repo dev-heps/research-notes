@@ -22,7 +22,7 @@ function getHeaderNav(activeSection, depth = 1) {
     <header class="site-header">
       <div class="shell">
         <nav class="nav" aria-label="Primary navigation">
-          <a href="${portfolioUrl}" class="nav-back"><span>←</span><span>Portfolio</span></a>
+          <a href="${portfolioUrl}" class="nav-back"><span>←</span><span>Home</span></a>
           <div class="nav-divider" aria-hidden="true"></div>
           <a href="${prefix}" class="${activeSection === 'home' ? 'nav-active' : ''}">Research Notes</a>
           <a href="${prefix}papers/" class="${activeSection === 'papers' ? 'nav-active' : ''}">Papers</a>
