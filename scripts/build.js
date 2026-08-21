@@ -16,7 +16,7 @@ const SECTIONS = [
 function getHeaderNav(activeSection, depth = 1) {
   const isDev = process.env.NODE_ENV === 'development';
   const prefix = depth === 2 ? '../../' : (depth === 1 ? '../' : './');
-  const portfolioUrl = isDev ? 'http://localhost:3000/' : 'https://dwlee.github.io/';
+  const portfolioUrl = isDev ? 'http://localhost:3000/' : 'https://dwlee-log.github.io/';
 
   return `
     <header class="site-header">
@@ -24,7 +24,7 @@ function getHeaderNav(activeSection, depth = 1) {
         <nav class="nav" aria-label="Primary navigation">
           <a href="${portfolioUrl}" class="nav-back"><span>←</span><span>Home</span></a>
           <div class="nav-divider" aria-hidden="true"></div>
-          <a href="${prefix}" class="${activeSection === 'home' ? 'nav-active' : ''}">Research Notes</a>
+          <a href="${prefix}" class="${activeSection === 'home' ? 'nav-active' : ''}">Research</a>
           <a href="${prefix}papers/" class="${activeSection === 'papers' ? 'nav-active' : ''}">Papers</a>
         </nav>
       </div>
@@ -182,7 +182,7 @@ function buildSection(section) {
     <title>${frontmatter.title} - ${section.title} - Research Notes</title>
     <meta name="description" content="${frontmatter.summary || frontmatter.title}">
     <link rel="stylesheet" href="../../styles.css">
-    <link rel="stylesheet" href="/research-notes/styles.css">
+    <link rel="stylesheet" href="/research/styles.css">
     ${getKaTeXHead()}
   </head>
   <body>
@@ -239,7 +239,7 @@ function buildSection(section) {
     <title>${section.title} - Research Notes</title>
     <meta name="description" content="${section.title} for Research Notes.">
     <link rel="stylesheet" href="../styles.css">
-    <link rel="stylesheet" href="/research-notes/styles.css">
+    <link rel="stylesheet" href="/research/styles.css">
     ${getKaTeXHead()}
   </head>
   <body>
@@ -286,7 +286,7 @@ const homeIndexHtml = `<!doctype html>
     <title>Research Notes - Dongwoo Lee</title>
     <meta name="description" content="Research notes on digital healthcare, mathematics, and quantum computing.">
     <link rel="stylesheet" href="./styles.css">
-    <link rel="stylesheet" href="/research-notes/styles.css">
+    <link rel="stylesheet" href="/research/styles.css">
     ${getKaTeXHead()}
   </head>
   <body>
