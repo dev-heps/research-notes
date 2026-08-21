@@ -9,17 +9,7 @@ const SECTIONS = [
   { 
     id: 'papers', 
     title: 'Papers', 
-    lede: 'Literature reviews, paper summaries, methodologies, and open questions across digital healthcare, mathematics, and quantum computing.' 
-  },
-  { 
-    id: 'ideas', 
-    title: 'Ideas', 
-    lede: 'Early research hypotheses, theoretical sketches, and conceptual project roadmaps.' 
-  },
-  { 
-    id: 'experiments', 
-    title: 'Experiments', 
-    lede: 'Reproducible computational experiments, benchmark setups, and observations.' 
+    lede: 'Literature reviews, paper summaries, methodologies, and critical open questions across digital healthcare, mathematics, and quantum computing.' 
   }
 ];
 
@@ -36,8 +26,6 @@ function getHeaderNav(activeSection, depth = 1) {
           <div class="nav-divider" aria-hidden="true"></div>
           <a href="${prefix}" class="${activeSection === 'home' ? 'nav-active' : ''}">Research Notes</a>
           <a href="${prefix}papers/" class="${activeSection === 'papers' ? 'nav-active' : ''}">Papers</a>
-          <a href="${prefix}ideas/" class="${activeSection === 'ideas' ? 'nav-active' : ''}">Ideas</a>
-          <a href="${prefix}experiments/" class="${activeSection === 'experiments' ? 'nav-active' : ''}">Experiments</a>
         </nav>
       </div>
     </header>
@@ -163,6 +151,8 @@ function parseMarkdown(md) {
   return { frontmatter, html };
 }
 
+let allPaperEntries = [];
+
 function buildSection(section) {
   const sectionContentDir = path.join(CONTENT_DIR, section.id);
   const sectionDocsDir = path.join(DOCS_DIR, section.id);
@@ -222,9 +212,12 @@ function buildSection(section) {
       slug,
       status: frontmatter.status || 'Note',
       summary: frontmatter.summary || 'Click to read note details.',
-      url: `./${htmlFileName}`
+      url: `./${htmlFileName}`,
+      homeUrl: `./${section.id}/${htmlFileName}`
     });
   }
+
+  allPaperEntries = entries;
 
   const cardsHtml = entries.length > 0 ? entries.map(e => `
         <a class="card" href="${e.url}">
@@ -269,10 +262,22 @@ function buildSection(section) {
   console.log(`[build:research] Built ${section.title}: ${entries.length} notes.`);
 }
 
-console.log('[build:research] Compiling research-notes with unified design & KaTeX...');
+console.log('[build:research] Compiling research-notes (Papers focus)...');
 SECTIONS.forEach(buildSection);
 
 // Update docs/index.html (Home)
+const homeCardsHtml = allPaperEntries.length > 0 ? allPaperEntries.map(e => `
+      <a class="card" href="${e.homeUrl}">
+        <span class="status">${e.status}</span>
+        <h3>${e.title}</h3>
+        <p>${e.summary}</p>
+      </a>`).join('\n') : `
+      <article class="card">
+        <span class="status">Literature</span>
+        <h3>No paper reviews yet</h3>
+        <p>Add markdown notes in <code>content/papers/</code> to publish.</p>
+      </article>`;
+
 const homeIndexHtml = `<!doctype html>
 <html lang="en">
   <head>
@@ -290,24 +295,10 @@ const homeIndexHtml = `<!doctype html>
       <section class="hero">
         <p class="eyebrow">Research Archive</p>
         <h1>Research Notes</h1>
-        <p class="lede">Working notes for literature reviews, early hypotheses, and computational experiments across digital healthcare, mathematics, and quantum computing.</p>
+        <p class="lede">Working archive for academic paper reviews, literature summaries, and theoretical methodologies across digital healthcare, mathematics, and quantum computing.</p>
       </section>
-      <section class="grid" aria-label="Research categories">
-        <a class="card" href="./papers/">
-          <span class="status">Literature</span>
-          <h2>Papers</h2>
-          <p>Key claims, methods, limitations, and critical summaries of relevant literature.</p>
-        </a>
-        <a class="card" href="./ideas/">
-          <span class="status">Hypotheses</span>
-          <h2>Ideas</h2>
-          <p>Early research questions, mathematical sketches, and conceptual project roadmaps.</p>
-        </a>
-        <a class="card" href="./experiments/">
-          <span class="status">Logs</span>
-          <h2>Experiments</h2>
-          <p>Computational reproducibility logs, parameter sweeps, and benchmark data.</p>
-        </a>
+      <section class="list" aria-label="Paper reviews">
+        ${homeCardsHtml}
       </section>
     </main>
     <footer>&copy; 2026 Dongwoo Lee. Research Notes Archive.</footer>
