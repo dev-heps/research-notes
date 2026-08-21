@@ -16,7 +16,7 @@ const SECTIONS = [
 function getHeaderNav(activeSection, depth = 1) {
   const isDev = process.env.NODE_ENV === 'development';
   const prefix = depth === 2 ? '../../' : (depth === 1 ? '../' : './');
-  const portfolioUrl = isDev ? 'http://localhost:3000/' : 'https://dwlee-log.github.io/';
+  const portfolioUrl = isDev ? 'http://localhost:3000/' : 'https://dev-dwlee.github.io/';
 
   return `
     <header class="site-header">
