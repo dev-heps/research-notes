@@ -1,6 +1,6 @@
 # Agent Notes
 
-This repository is the Research Notes archive for `https://dev-heps.github.io/research-notes/`.
+This repository is the Research Notes archive for `https://dwlee.github.io/research-notes/`.
 
 ## Purpose
 
@@ -36,8 +36,8 @@ git diff --check
 
 After pushing, verify:
 
-- `https://dev-heps.github.io/research-notes/`
-- `https://dev-heps.github.io/research-notes/papers/`
-- `https://dev-heps.github.io/research-notes/ideas/`
-- `https://dev-heps.github.io/research-notes/experiments/`
+- `https://dwlee.github.io/research-notes/`
+- `https://dwlee.github.io/research-notes/papers/`
+- `https://dwlee.github.io/research-notes/ideas/`
+- `https://dwlee.github.io/research-notes/experiments/`
 

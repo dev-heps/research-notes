@@ -9,7 +9,7 @@ This repository keeps research-oriented writing separate from the main portfolio
 - experiment logs
 - domain notes for digital healthcare, mathematics, and quantum computing
 
-Live site: https://dev-heps.github.io/research-notes/
+Live site: https://dwlee.github.io/research-notes/
 
 ## Structure
 
