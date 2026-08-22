@@ -1,4 +1,4 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 const path = require('path');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -14,15 +14,13 @@ const SECTIONS = [
 ];
 
 function getHeaderNav(activeSection, depth = 1) {
-  const isDev = process.env.NODE_ENV === 'development';
   const prefix = depth === 2 ? '../../' : (depth === 1 ? '../' : './');
-  const portfolioUrl = isDev ? 'http://localhost:3000/' : 'https://dev-dwlee.github.io/';
 
   return `
     <header class="site-header">
       <div class="shell">
         <nav class="nav" aria-label="Primary navigation">
-          <a href="${portfolioUrl}" class="nav-back"><span>←</span><span>Home</span></a>
+          <a href="/" class="nav-back" id="nav-home-link-${activeSection}"><span>←</span><span>Home</span></a>
           <div class="nav-divider" aria-hidden="true"></div>
           <a href="${prefix}" class="${activeSection === 'home' ? 'nav-active' : ''}">Research</a>
           <a href="${prefix}papers/" class="${activeSection === 'papers' ? 'nav-active' : ''}">Papers</a>
